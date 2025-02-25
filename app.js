@@ -1,21 +1,17 @@
-var add = document.getElementById("add");
-var pName = document.getElementById("productName");
-var pPrice = document.getElementById("productPrice");
-var pDesc = document.getElementById("productDesc");
-var tbody = document.getElementById("tbody");
+const add = document.getElementById("add");
+const pName = document.getElementById("productName");
+const pPrice = document.getElementById("productPrice");
+const pDesc = document.getElementById("productDesc");
+const tbody = document.getElementById("tbody");
 
-var products;
-var currentIndex;
+let products;
+let currentIndex;
 
-var nRegex = /^[A-Z][a-z 0-9]{4,}/;
-var pRegex = /^[1-9][0-9]{2,}$/;
-var dRegex = /[A-Za-z0-9 ]{20,}/;
+const nRegex = /^[A-Z][a-z 0-9]{4,}/;
+const pRegex = /^[1-9][0-9]{2,}$/;
+const dRegex = /[A-Za-z0-9 ]{20,}/;
 
-pName.addEventListener("keyup", validateName);
-pPrice.addEventListener("keyup", validatePrice);
-pDesc.addEventListener("keyup", validateDesc);
-
-function validateName() {
+const validateName = () => {
   if (nRegex.test(pName.value) == false) {
     pName.classList.add("is-invalid");
     pName.classList.remove("is-valid");
@@ -25,8 +21,11 @@ function validateName() {
     pName.classList.remove("is-invalid");
     return true;
   }
-}
-function validatePrice() {
+};
+
+pName.addEventListener("keyup", validateName);
+
+const validatePrice = () => {
   if (pRegex.test(pPrice.value) == false) {
     pPrice.classList.add("is-invalid");
     pPrice.classList.remove("is-valid");
@@ -36,8 +35,11 @@ function validatePrice() {
     pPrice.classList.remove("is-invalid");
     return true;
   }
-}
-function validateDesc() {
+};
+
+pPrice.addEventListener("keyup", validatePrice);
+
+const validateDesc = () => {
   if (dRegex.test(pDesc.value) == false) {
     pDesc.classList.add("is-invalid");
     pDesc.classList.remove("is-valid");
@@ -47,40 +49,13 @@ function validateDesc() {
     pDesc.classList.remove("is-invalid");
     return true;
   }
-}
+};
 
-if (localStorage.getItem("products") == null) {
-  products = [];
-} else {
-  products = JSON.parse(localStorage.getItem("products"));
-  displayProduct(products);
-}
+pDesc.addEventListener("keyup", validateDesc);
 
-add.addEventListener("click", function () {
-  if (add.innerHTML == "Add") {
-    addProduct();
-  } else {
-    updateProduct();
-  }
-});
-
-function addProduct() {
-  if (validateName() && validatePrice() && validateDesc()) {
-    var product = {
-      name: pName.value,
-      price: pPrice.value,
-      desc: pDesc.value,
-    };
-    products.push(product);
-    saveToLocalStorage(products);
-    displayProduct(products);
-    clearProduct();
-  }
-}
-
-function displayProduct(products) {
-  var prod = "";
-  for (var i = 0; i < products.length; i++) {
+const displayProduct = (products) => {
+  let prod = "";
+  for (let i = 0; i < products.length; i++) {
     prod += `<tr> 
                 <td>${products[i].name}</td>
                 <td>${products[i].price}</td>
@@ -91,9 +66,38 @@ function displayProduct(products) {
   }
 
   tbody.innerHTML = prod;
+};
+
+if (localStorage.getItem("products") == null) {
+  products = [];
+} else {
+  products = JSON.parse(localStorage.getItem("products"));
+  displayProduct(products);
 }
 
-function clearProduct() {
+add.addEventListener("click", () => {
+  if (add.innerHTML == "Add") {
+    addProduct();
+  } else {
+    updateProduct();
+  }
+});
+
+const addProduct = () => {
+  if (validateName() && validatePrice() && validateDesc()) {
+    const product = {
+      name: pName.value,
+      price: pPrice.value,
+      desc: pDesc.value,
+    };
+    products.push(product);
+    saveToLocalStorage(products);
+    displayProduct(products);
+    clearProduct();
+  }
+};
+
+const clearProduct = () => {
   pName.value = "";
   pPrice.value = "";
   pDesc.value = "";
@@ -101,38 +105,38 @@ function clearProduct() {
   pName.classList.remove("is-valid", "is-invalid");
   pPrice.classList.remove("is-valid", "is-invalid");
   pDesc.classList.remove("is-valid", "is-invalid");
-}
+};
 
-function search(term) {
-  var searchedProduct = products.filter(function (product) {
+const search = (term) => {
+  const searchedProduct = products.filter((product) => {
     return product.name.toLowerCase().includes(term.trim().toLowerCase());
   });
   displayProduct(searchedProduct);
-}
+};
 
-function deleteProduct(index) {
+const deleteProduct = (index) => {
   products.splice(index, 1);
   saveToLocalStorage(products);
   displayProduct(products);
-}
+};
 
-function saveToLocalStorage(products) {
+const saveToLocalStorage = (products) => {
   localStorage.setItem("products", JSON.stringify(products));
-}
+};
 
-function showProduct(index) {
+const showProduct = (index) => {
   currentIndex = index;
   pName.value = products[index].name;
   pPrice.value = products[index].price;
   pDesc.value = products[index].desc;
 
   add.innerHTML = "Update";
-}
+};
 
-function updateProduct() {
+const updateProduct = () => {
   if (!validateName() || !validatePrice() || !validateDesc()) return;
 
-  var product = {
+  const product = {
     name: pName.value,
     price: pPrice.value,
     desc: pDesc.value,
@@ -144,4 +148,4 @@ function updateProduct() {
   clearProduct();
 
   add.innerHTML = "Add";
-}
+};
